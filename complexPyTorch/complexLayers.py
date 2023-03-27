@@ -97,14 +97,15 @@ class ComplexTanh(Module):
 class ComplexConvTranspose2d(Module):
 
     def __init__(self,in_channels, out_channels, kernel_size, stride=1, padding=0,
-                 output_padding=0, groups=1, bias=True, dilation=1, padding_mode='zeros'):
+                 output_padding=0, groups=1, bias=True, dilation=1, padding_mode='zeros',
+                 device=torch.device('cpu')):
 
         super(ComplexConvTranspose2d, self).__init__()
 
         self.conv_tran_r = ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding,
-                                       output_padding, groups, bias, dilation, padding_mode)
+                                       output_padding, groups, bias, dilation, padding_mode, device)
         self.conv_tran_i = ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding,
-                                       output_padding, groups, bias, dilation, padding_mode)
+                                       output_padding, groups, bias, dilation, padding_mode, device)
 
 
     def forward(self,input):
@@ -113,10 +114,14 @@ class ComplexConvTranspose2d(Module):
 class ComplexConv2d(Module):
 
     def __init__(self,in_channels, out_channels, kernel_size=3, stride=1, padding = 0,
-                 dilation=1, groups=1, bias=True):
+                 dilation=1, groups=1, bias=True, device=torch.device('cpu')):
         super(ComplexConv2d, self).__init__()
-        self.conv_r = Conv2d(in_channels, out_channels, kernel_size, stride, padding, dilation, groups, bias)
-        self.conv_i = Conv2d(in_channels, out_channels, kernel_size, stride, padding, dilation, groups, bias)
+        self.conv_r = Conv2d(
+            in_channels, out_channels, kernel_size, stride, padding, dilation, groups, bias, device
+        )
+        self.conv_i = Conv2d(
+            in_channels, out_channels, kernel_size, stride, padding, dilation, groups, bias, device
+        )
         
     def forward(self,input):    
         return apply_complex(self.conv_r, self.conv_i, input)
